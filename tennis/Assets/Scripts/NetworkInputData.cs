@@ -1,10 +1,24 @@
 using Fusion;
 using UnityEngine;
 
-public struct NetworkInputData : INetworkInput
-{
-  public const byte MOUSEBUTTON1 = 0x01;
-  public const byte MOUSEBUTTON2 = 0x02;
-  public byte buttons;
-  public Vector3 direction;
+public enum ButtonInputs {
+    MOUSEL = 0,
+    MOUSER = 1
+}
+
+public struct PolarCoords : INetworkStruct {
+  public float angle;
+  public float magnitude;
+}
+
+public struct NetworkInputData : INetworkInput {
+  public NetworkButtons buttons;
+  public PolarCoords movementInput;
+  public PolarCoords mousePosition;
+
+
+  public override string ToString(){
+    return System.Convert.ToString(buttons.Bits, 2) + " movement: " + movementInput.angle + " " + movementInput.magnitude
+     + " camera: " + mousePosition.angle + " " + mousePosition.magnitude;
+  }
 }
