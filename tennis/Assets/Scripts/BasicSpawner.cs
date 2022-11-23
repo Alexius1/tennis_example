@@ -16,11 +16,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks {
 
   private void OnGUI () {
     if (_runner == null) {
-      if (GUI.Button (new Rect (0, 0, 200, 40), "Host")) {
-        StartGame (GameMode.Host);
+      if (GUI.Button (new Rect (0, Screen.height - 80, 200, 40), "Host")) {
+        OpenLobby (GameMode.Host);
       }
-      if (GUI.Button (new Rect (0, 40, 200, 40), "Join")) {
-        StartGame (GameMode.Client);
+      if (GUI.Button (new Rect (0, Screen.height - 40, 200, 40), "Join")) {
+        OpenLobby (GameMode.Client);
       }
 
     }
@@ -38,11 +38,13 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks {
         networkPlayerObject.transform.Rotate (new Vector3 (0, 180, 0));
       // Keep track of the player avatars so we can remove it when they disconnect
       _spawnedCharacters.Add (player, networkPlayerObject);
+
+      if (_spawnedCharacters.Count == 2) {
+        GameLogic.Instance.StartGame ();
+      }
     }
-    if (runner.LocalPlayer.Equals (player)) {
-      this.GetComponentInChildren<Camera> ().enabled = false;
-      this.GetComponentInChildren<AudioListener> ().enabled = false;
-    }
+    this.GetComponentInChildren<Camera> ().enabled = false;
+    this.GetComponentInChildren<AudioListener> ().enabled = false;
   }
 
   public void OnPlayerLeft (NetworkRunner runner, PlayerRef player) {
@@ -84,10 +86,13 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks {
   public void OnCustomAuthenticationResponse (NetworkRunner runner, Dictionary<string, object> data) { }
   public void OnHostMigration (NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
   public void OnReliableDataReceived (NetworkRunner runner, PlayerRef player, System.ArraySegment<byte> data) { }
-  public void OnSceneLoadDone (NetworkRunner runner) { }
+  public void OnSceneLoadDone (NetworkRunner runner) {
+    this.GetComponentInChildren<Camera> ().enabled = false;
+    this.GetComponentInChildren<AudioListener> ().enabled = false;
+  }
   public void OnSceneLoadStart (NetworkRunner runner) { }
 
-  async void StartGame (GameMode mode) {
+  async void OpenLobby (GameMode mode) {
     _runner = gameObject.AddComponent<NetworkRunner> ();
     _runner.ProvideInput = true;
     _buttons.SetAllUp ();
@@ -105,6 +110,10 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks {
       _buttons.Set (ButtonInputs.MOUSEL, true);
     if (Input.GetMouseButtonDown (0))
       _buttons.Set (ButtonInputs.MOUSER, true);
+    if (Input.GetKeyDown (KeyCode.R))
+      _buttons.Set (ButtonInputs.R, true);
+    if (Input.GetKeyDown (KeyCode.Q))
+      _buttons.Set (ButtonInputs.Q, true);
   }
 
   //pixel coords -> -0.5 - 0.5

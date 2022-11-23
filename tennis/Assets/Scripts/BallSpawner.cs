@@ -4,7 +4,6 @@ using UnityEngine;
 public class BallSpawner : NetworkBehaviour {
   [SerializeField] private PhysxBall _physxBallPrefab;
   [Networked] private TickTimer delay { get; set; }
-  [SerializeField] private GameLogic _gameLogic;
 
   public override void FixedUpdateNetwork () {
     if (delay.ExpiredOrNotRunning (Runner)) {
@@ -12,7 +11,7 @@ public class BallSpawner : NetworkBehaviour {
       Runner.Spawn (_physxBallPrefab,
         transform.position, Quaternion.identity,
         Object.InputAuthority, (runner, o) => {
-          o.GetComponent<PhysxBall> ().Init (10 * transform.forward, _gameLogic);
+          o.GetComponent<PhysxBall> ().Init (10 * transform.forward);
         });
     }
   }

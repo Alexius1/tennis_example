@@ -3,36 +3,49 @@ using UnityEngine;
 
 public class PhysxBall : NetworkBehaviour {
   [Networked] private TickTimer life { get; set; }
-  private GameLogic gameLogic;
 
-  public void Init (Vector3 forward, GameLogic gameLogic) {
+  public void Init (Vector3 forward) {
     life = TickTimer.CreateFromSeconds (Runner, 5.0f);
     GetComponent<Rigidbody> ().velocity = forward;
-    this.gameLogic = gameLogic;
   }
 
   public override void FixedUpdateNetwork () {
-    if (life.Expired (Runner)){
+    if (!HasStateAuthoritySafe ())
+      return;
+    if (life.Expired (Runner)) {
       Runner.Despawn (Object);
-      gameLogic.BallHit(Area.Out);
+      GameLogic.Instance.BallHit (Area.Out);
     }
   }
 
   private void OnCollisionEnter (Collision other) {
+    if (!HasStateAuthoritySafe ())
+      return;
     if (other.gameObject.CompareTag ("Net")) {
-      gameLogic.BallHit(Area.Net);
-      Runner.Despawn (Object);
+      GameLogic.Instance.BallHit (Area.Net);
+      Destroy ();
     } else if (other.gameObject.CompareTag ("Ground")) {
-      if(!gameLogic.BallHit(transform.position))
-        Runner.Despawn (Object);
+      if (!GameLogic.Instance.BallHit (transform.position))
+        Destroy ();
     }
   }
 
-  private void OnTriggerStay(Collider other) {
+  private void OnTriggerEnter (Collider other) {
+    if (!HasStateAuthoritySafe ())
+      return;
     if (other.gameObject.CompareTag ("Player")) {
-      other.GetComponent<Player>().CatchBall();
-      if (Runner != null && Runner.IsServer) //to prevent error when deleting object
-        Runner.Despawn(Object);
+      GameLogic.Instance.SwitchExpectedSide();
+      other.GetComponent<Player> ().CatchBall ();
+      Destroy ();
     }
+  }
+
+  private bool HasStateAuthoritySafe () {
+    return Object != null && Object.HasStateAuthority;
+  }
+
+  private void Destroy () {
+    if (Runner != null && Runner.IsServer) //to prevent error when deleting object
+      Runner.Despawn (Object);
   }
 }

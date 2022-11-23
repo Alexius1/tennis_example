@@ -3,7 +3,9 @@ using UnityEngine;
 
 public enum ButtonInputs {
     MOUSEL = 0,
-    MOUSER = 1
+    MOUSER = 1,
+    R = 2,
+    Q = 2
 }
 
 public struct PolarCoords : INetworkStruct {
