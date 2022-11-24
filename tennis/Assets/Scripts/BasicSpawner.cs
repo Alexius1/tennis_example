@@ -11,8 +11,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks {
   private NetworkButtons _buttons;
   [SerializeField] private NetworkPrefabRef _playerPrefab;
   private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject> ();
-
   [SerializeField] private Vector3[] _playerStartingPositions;
+  private const float SQRT0_5 = 0.707106781f;
 
   private void OnGUI () {
     if (_runner == null) {
@@ -38,6 +38,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks {
         networkPlayerObject.transform.Rotate (new Vector3 (0, 180, 0));
       // Keep track of the player avatars so we can remove it when they disconnect
       _spawnedCharacters.Add (player, networkPlayerObject);
+
+      if (runner.LocalPlayer.Equals(player)) //allow reset and random point on host
+        GameLogic.Instance.GetComponent<NetworkObject>().AssignInputAuthority(player);
 
       if (_spawnedCharacters.Count == 2) {
         GameLogic.Instance.StartGame ();
@@ -68,7 +71,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks {
     direction = NormalizeMousePosition (Input.mousePosition);
 
     data.mousePosition.angle = Vector2.Angle (Vector2.up, direction) * Mathf.Sign (direction.x);
-    data.mousePosition.magnitude = direction.magnitude;
+    data.mousePosition.magnitude = direction.magnitude / SQRT0_5;
 
     data.buttons = _buttons;
     _buttons.SetAllUp ();

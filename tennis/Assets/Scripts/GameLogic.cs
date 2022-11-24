@@ -154,7 +154,7 @@ public class GameLogic : NetworkBehaviour {
   }
 
   public override void FixedUpdateNetwork () {
-    if (HasStateAuthority && GetInput (out NetworkInputData data)) {
+    if (GetInput (out NetworkInputData data)) {
       if (data.buttons.IsSet (ButtonInputs.R))
         ResetGamestate ();
       if (data.buttons.IsSet (ButtonInputs.Q)) {

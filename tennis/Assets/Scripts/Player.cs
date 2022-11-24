@@ -14,6 +14,8 @@ public class Player : NetworkBehaviour {
   private Vector3 _forward;
   [Networked] private BallControll BallControll { get; set; } = BallControll.None;
   [SerializeField] private Camera _camera;
+  [SerializeField] private float _maxXRotation = 40; //horizontal camera rotation
+  [SerializeField] private float _maxYRotation = 10;
   //private static readonly Vector3 BASELINEMIDDLE = new Vector3 (0, 0, 11.89f);
   //private static readonly float SINGLEFIELDWIDTH = 8.23f;
 
@@ -33,8 +35,8 @@ public class Player : NetworkBehaviour {
       if (BallControll != BallControll.Normal)
         _cc.Move (inputDirection * 5 * Runner.DeltaTime);
 
-      _camera.transform.parent.localEulerAngles = new Vector3 (-Mathf.Cos (data.mousePosition.angle / 180 * Mathf.PI),
-        Mathf.Sin (data.mousePosition.angle / 180 * Mathf.PI), 0) * data.mousePosition.magnitude * 15;
+      _camera.transform.parent.localEulerAngles = new Vector3 (-Mathf.Cos (data.mousePosition.angle / 180 * Mathf.PI) * _maxYRotation,
+        Mathf.Sin (data.mousePosition.angle / 180 * Mathf.PI) * _maxXRotation , 0) * data.mousePosition.magnitude;
       if (BallControll != BallControll.None) {
         if (data.buttons.IsSet (ButtonInputs.MOUSEL)) {
           ThrowBall (10);

@@ -330,8 +330,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _physxBallPrefab: {fileID: 3606141975750159238, guid: 66bf19f2bc88b1fbdb0c550f684ca09d, type: 3}
-  ballControll: 0
   _camera: {fileID: 4115467084350302473}
+  _maxXRotation: 40
+  _maxYRotation: 10
 --- !u!65 &1999799480
 BoxCollider:
   m_ObjectHideFlags: 0

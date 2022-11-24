@@ -5,7 +5,7 @@ public enum ButtonInputs {
     MOUSEL = 0,
     MOUSER = 1,
     R = 2,
-    Q = 2
+    Q = 3
 }
 
 public struct PolarCoords : INetworkStruct {
