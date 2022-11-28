@@ -153,6 +153,10 @@ public class GameLogic : NetworkBehaviour {
     _expectedHit = (Area) ((int) ~_expectedHit & 1); //go to other side
   }
 
+  public void SwitchExpectedSideTo (Player player) {
+    _expectedHit = (Area) (_players[0].Equals(player) ? 0 : 1); //after intercept
+  }
+
   public override void FixedUpdateNetwork () {
     if (GetInput (out NetworkInputData data)) {
       if (data.buttons.IsSet (ButtonInputs.R))

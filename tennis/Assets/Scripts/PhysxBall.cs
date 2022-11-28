@@ -34,8 +34,9 @@ public class PhysxBall : NetworkBehaviour {
     if (!HasStateAuthoritySafe ())
       return;
     if (other.gameObject.CompareTag ("Player")) {
-      GameLogic.Instance.SwitchExpectedSide();
-      other.GetComponent<Player> ().CatchBall ();
+      Player p = other.GetComponent<Player> ();
+      GameLogic.Instance.SwitchExpectedSideTo(p);
+      p.CatchBall ();
       Destroy ();
     }
   }
